@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cronômetro - Câmara Municipal de Igarassu</title>
+    <style>
+        :root {
+            --primary: #02baf2;
+            --warning: #ffc107;
+            --danger: #f84545;
+            --success: #28a745;
+            --white: #fff;
+            --light: #f8f9fa;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --font-mono: 'Roboto Mono', SFMono-Regular, monospace;
+            --font-sans: 'Inter', -apple-system, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* RELÓGIO REDONDO */
+        .round-timer-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .progress-ring-bg { fill: none; stroke: rgba(0, 0, 0, 0.05); }
+        #view-display .progress-ring-bg { stroke: rgba(255, 255, 255, 0.1); }
+
+        .progress-ring-bar {
+            fill: none;
+            stroke: var(--primary);
+            stroke-linecap: round;
+            stroke-dasharray: 100;
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 0.5s linear, stroke 0.3s ease;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .time-warning { stroke: var(--warning) !important; color: var(--warning) !important; }
+        .time-danger { stroke: var(--danger) !important; color: var(--danger) !important; animation: pulse 1s infinite alternate; }
+
+        @keyframes pulse { from { opacity: 1; } to { opacity: 0.5; } }
+
+        /* PAINEL DE CONTROLE */
+        #view-controller { padding: 20px; display: none; background: var(--light); min-height: 100vh;}
+        .ctrl-card { max-width: 1000px; margin: 0 auto; background: var(--white); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .ctrl-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        
+        .preview-section { background: #0f172a; border-radius: 15px; padding: 20px; display: flex; justify-content: space-around; margin-bottom: 25px; }
+        .preview-clock-box { text-align: center; }
+        .preview-clock-label { font-size: 10px; text-transform: uppercase; color: #94a3b8; margin-bottom: 10px; letter-spacing: 1px;}
+        
+        .size-main-ctrl { width: 140px; height: 140px; }
+        .size-aparte-ctrl { width: 140px; height: 140px; }
+        .digital-main-ctrl { font-family: var(--font-mono); font-size: 2.2rem; font-weight: bold; position: absolute; color: white; }
+        
+        .controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .btn-group-box { background: #f1f5f9; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; }
+        .btn-group-box h3 { font-size: 12px; margin-bottom: 15px; text-transform: uppercase; color: var(--gray); text-align: center; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        
+        button { padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; color: white; font-size: 14px; }
+        button:hover { filter: brightness(90%); transform: translateY(-1px); }
+        button:active { transform: translateY(0); }
+        .btn-primary { background: var(--primary); }
+        .btn-success { background: var(--success); }
+        .btn-warning { background: var(--warning); color: #000; }
+        .btn-danger { background: var(--danger); }
+        .btn-purple { background: #8b5cf6; }
+
+        /* TELÃO */
+        #view-display { background: #020617; color: white; height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .display-header { margin-bottom: 30px; text-align: center; }
+        .display-header h1 { font-size: 3vw; color: var(--primary); text-transform: uppercase; margin-bottom: 5px;}
+        .display-header h2 { font-size: 1.5vw; color: var(--gray); font-weight: 400; }
+        
+        .clock-wrapper { transition: opacity 0.5s ease, transform 0.5s ease; }
+        .hidden { display: none !important; opacity: 0; }
+        
+        .size-main-display { width: 70vh; height: 70vh; }
+        .digital-main-display { font-family: var(--font-mono); font-size: 15vh; font-weight: bold; position: absolute; }
+        
+        .label-aparte-display { font-size: 3vh; color: var(--warning); font-weight: bold; margin-bottom: 20px; letter-spacing: 5px; text-align: center;}
+    </style>
+</head>
+<body>
+
+    <div id="view-controller">
+        <div class="ctrl-card">
+            <div class="ctrl-header">
+                <h2>Câmara de Igarassu</h2>
+                <button class="btn-primary" onclick="abrirTelao()">🖥️ Abrir Telão</button>
+            </div>
+
+            <div class="preview-section">
+                <div class="preview-clock-box">
+                    <div class="preview-clock-label">Controle Principal</div>
+                    <div class="round-timer-container size-main-ctrl">
+                        <svg viewBox="0 0 36 36" width="100%"><path class="progress-ring-bg" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="2"/><path id="ring-main-ctrl" class="progress-ring-bar" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="2"/></svg>
+                        <div id="txt-main-ctrl" class="digital-main-ctrl">10:00</div>
+                    </div>
+                </div>
+                <div class="preview-clock-box">
+                    <div class="preview-clock-label">Controle Aparte</div>
+                    <div class="round-timer-container size-aparte-ctrl">
+                        <svg viewBox="0 0 36 36" width="100%"><path class="progress-ring-bg" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="2"/><path id="ring-aparte-ctrl" class="progress-ring-bar" style="stroke:var(--warning)" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="2"/></svg>
+                        <div id="txt-aparte-ctrl" class="digital-main-ctrl" style="color:var(--warning)">03:00</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls-grid">
+                <div class="btn-group-box">
+                    <h3>Tribuna Principal</h3>
+                    <div class="btn-grid">
+                        <button class="btn-success" onclick="iniciar()">Iniciar</button>
+                        <button class="btn-warning" onclick="pausar()">Pausar</button>
+                        <button class="btn-danger" onclick="zerar()">Zerar</button>
+                    </div>
+                    <h3 style="margin-top:15px">Acréscimo</h3>
+                    <div class="btn-grid">
+                        <button class="btn-primary" onclick="addTime(30)">+30s</button>
+                        <button class="btn-primary" onclick="addTime(60)">+1m</button>
+                        <button class="btn-purple" onclick="testarSom()">🔔 Som</button>
+                    </div>
+                </div>
+
+                <div class="btn-group-box" style="border: 2px solid var(--warning)">
+                    <h3 style="color:#d97706">Modo Aparte</h3>
+                    <div class="btn-grid">
+                        <button class="btn-success" onclick="iniciarA()">▶ Ativar</button>
+                        <button class="btn-warning" onclick="pausarA()">Pausar</button>
+                        <button class="btn-danger" onclick="zerarA()">Zerar</button>
+                    </div>
+                    <h3 style="margin-top:15px">Acréscimo Aparte</h3>
+                    <div class="btn-grid">
+                        <button class="btn-primary" style="background:#64748b" onclick="addTimeA(30)">+30s</button>
+                        <button class="btn-primary" style="background:#64748b" onclick="addTimeA(60)">+1m</button>
+                        <button class="btn-primary" style="background:#64748b" onclick="addTimeA(120)">+2m</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-display">
+        <div class="display-header">
+            <h1>Câmara Municipal de Igarassu</h1>
+            <h2>Sessão Plenária</h2>
+        </div>
+
+        <div id="wrapper-main" class="clock-wrapper">
+            <div class="round-timer-container size-main-display">
+                <svg viewBox="0 0 36 36" width="100%"><path class="progress-ring-bg" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="1"/><path id="ring-main-disp" class="progress-ring-bar" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="1"/></svg>
+                <div id="txt-main-disp" class="digital-main-display">10:00</div>
+            </div>
+        </div>
+
+        <div id="wrapper-aparte" class="clock-wrapper hidden">
+            <div class="label-aparte-display">TEMPO DE APARTE</div>
+            <div class="round-timer-container size-main-display">
+                <svg viewBox="0 0 36 36" width="100%"><path class="progress-ring-bg" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="1"/><path id="ring-aparte-disp" class="progress-ring-bar" style="stroke:var(--warning)" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="1"/></svg>
+                <div id="txt-aparte-disp" class="digital-main-display" style="color:var(--warning)">03:00</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canal = new BroadcastChannel('igarassu_v3');
+        const params = new URLSearchParams(window.location.search);
+        const isDisplay = params.get('mode') === 'display';
+
+        let tMain = 600, tMainInit = 600, intMain = null;
+        let tAparte = 180, tAparteInit = 180, intAparte = null;
+        let modoAtivo = 'main'; // 'main' ou 'aparte'
+
+        // ÁUDIO
+        let audioCtx = null;
+        function beep() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+            gain.gain.setValueAtTime(1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1);
+            osc.start(); osc.stop(audioCtx.currentTime + 1);
+        }
+
+        if (isDisplay) {
+            document.getElementById('view-display').style.display = 'flex';
+            canal.onmessage = e => {
+                syncUI(e.data);
+                if (e.data.playBeep) beep();
+            };
+        } else {
+            document.getElementById('view-controller').style.display = 'block';
+        }
+
+        function format(s) {
+            let m = Math.floor(Math.max(0, s) / 60);
+            let sec = Math.max(0, s) % 60;
+            return `${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
+        }
+
+        function syncUI(data) {
+            const mStr = format(data.tM), aStr = format(data.tA);
+            
+            if (isDisplay) {
+                // Alternar visibilidade no telão
+                document.getElementById('wrapper-main').className = data.modo === 'main' ? 'clock-wrapper' : 'hidden';
+                document.getElementById('wrapper-aparte').className = data.modo === 'aparte' ? 'clock-wrapper' : 'hidden';
+                
+                document.getElementById('txt-main-disp').textContent = mStr;
+                document.getElementById('txt-aparte-disp').textContent = aStr;
+                updateRing('ring-main-disp', data.tM, data.tMI, true);
+                updateRing('ring-aparte-disp', data.tA, data.tAI, false);
+            } else {
+                document.getElementById('txt-main-ctrl').textContent = mStr;
+                document.getElementById('txt-aparte-ctrl').textContent = aStr;
+                updateRing('ring-main-ctrl', data.tM, data.tMI, true);
+                updateRing('ring-aparte-ctrl', data.tA, data.tAI, false);
+            }
+        }
+
+        function updateRing(id, cur, tot, isMain) {
+            const el = document.getElementById(id);
+            const offset = 100 - (cur / tot * 100);
+            el.style.strokeDashoffset = offset;
+            el.classList.remove('time-warning', 'time-danger');
+            if (cur <= 0) el.classList.add('time-danger');
+            else if (isMain && cur <= 60) el.classList.add('time-warning');
+        }
+
+        function broadcast(playBeep = false) {
+            const data = { tM: tMain, tMI: tMainInit, tA: tAparte, tAI: tAparteInit, modo: modoAtivo, playBeep };
+            syncUI(data);
+            if (!isDisplay) canal.postMessage(data);
+        }
+
+        // COMANDOS PRINCIPAL
+        function iniciar() {
+            modoAtivo = 'main'; pausarA();
+            if(!intMain && tMain > 0) intMain = setInterval(() => {
+                tMain--; 
+                if(tMain <= 0) { pausar(); broadcast(true); beep(); }
+                else broadcast();
+            }, 1000);
+            broadcast();
+        }
+        function pausar() { clearInterval(intMain); intMain = null; broadcast(); }
+        function zerar() { pausar(); tMain = tMainInit; broadcast(); }
+        function addTime(s) { tMain += s; if(tMain > tMainInit) tMainInit = tMain; broadcast(); }
+
+        // COMANDOS APARTE
+        function iniciarA() {
+            modoAtivo = 'aparte'; pausar();
+            if(!intAparte && tAparte > 0) intAparte = setInterval(() => {
+                tAparte--;
+                if(tAparte <= 0) { pausarA(); broadcast(true); beep(); }
+                else broadcast();
+            }, 1000);
+            broadcast();
+        }
+        function pausarA() { clearInterval(intAparte); intAparte = null; broadcast(); }
+        function zerarA() { pausarA(); tAparte = 180; tAparteInit = 180; modoAtivo = 'main'; broadcast(); }
+        function addTimeA(s) { tAparte += s; if(tAparte > tAparteInit) tAparteInit = tAparte; broadcast(); }
+
+        function testarSom() { beep(); }
+        function abrirTelao() { window.open(window.location.href + '?mode=display', '_blank'); }
+
+        if (!isDisplay) broadcast();
+    </script>
+</body>
+</html>
