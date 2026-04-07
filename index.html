@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -27,7 +27,7 @@
             overflow: hidden;
         }
 
-        /* ESTILOS DO RELÓGIO */
+        /* ESTILOS DO RELÓGIO REDONDO */
         .round-timer-container {
             position: relative;
             display: flex;
@@ -54,11 +54,13 @@
 
         @keyframes pulse { from { opacity: 1; } to { opacity: 0.4; } }
 
-        /* PAINEL DE CONTROLE */
+        /* PAINEL DE CONTROLE (OPERADOR) */
         #view-controller { padding: 20px; display: none; }
         .ctrl-card { max-width: 1100px; margin: 0 auto; background: var(--white); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .ctrl-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid var(--light); padding-bottom: 15px; }
         
+        .logo-cmi-ctrl { max-height: 60px; width: auto; object-fit: contain; }
+
         .preview-section { background: var(--dark); border-radius: 15px; padding: 25px; display: flex; justify-content: space-around; margin-bottom: 25px; }
         .preview-clock-box { text-align: center; }
         .preview-clock-label { font-size: 11px; text-transform: uppercase; color: var(--gray); margin-bottom: 15px; letter-spacing: 1px;}
@@ -77,41 +79,47 @@
         .btn-warning { background: var(--warning); color: #000; }
         .btn-danger { background: var(--danger); }
         .btn-primary { background: var(--primary); }
-        .btn-dark { background: var(--dark); }
 
-        /* TELÃO */
+        /* TELÃO (PROJETOR) */
         #view-display { background: #020617; color: white; height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        .display-header { margin-bottom: 40px; text-align: center; }
-        .display-header h1 { font-size: 3.5vw; color: var(--primary); text-transform: uppercase; margin-bottom: 10px;}
+        .logo-cmi-display { max-height: 15vh; width: auto; margin-bottom: 20px; object-fit: contain; }
+
+        .display-header { margin-bottom: 30px; text-align: center; }
+        .display-header h1 { font-size: 3.5vw; color: var(--primary); text-transform: uppercase; margin-bottom: 5px;}
         .display-header h2 { font-size: 1.8vw; color: var(--gray); font-weight: 400; letter-spacing: 2px; }
         
         .clock-wrapper { transition: opacity 0.4s ease; }
         .hidden { display: none !important; }
         
-        .size-main-display { width: 65vh; height: 65vh; }
+        .size-main-display { width: 60vh; height: 60vh; }
         .digital-display { font-family: var(--font-mono); font-size: 14vh; font-weight: bold; position: absolute; }
         .label-mode { font-size: 4vh; color: var(--warning); font-weight: bold; margin-bottom: 20px; letter-spacing: 8px; }
     </style>
 </head>
 <body>
 
+    <audio id="audio" src="audio.mp3" preload="auto"></audio>
+
     <div id="view-controller">
         <div class="ctrl-card">
             <div class="ctrl-header">
-                <h1 style="font-size: 20px; color: var(--primary)">Sistema de Cronometragem - Igarassu</h1>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <img src="logo.png" alt="Brasão Câmara" class="logo-cmi-ctrl" onerror="this.style.display='none'">
+                    <h1 style="font-size: 20px; color: var(--primary)">Igarassu - Controle Legislativo</h1>
+                </div>
                 <button class="btn-primary" onclick="abrirTelao()">🖥️ Abrir Aba do Telão</button>
             </div>
 
             <div class="preview-section">
                 <div class="preview-clock-box">
-                    <div class="preview-clock-label">Tribuna (Principal)</div>
+                    <div class="preview-clock-label">Tribuna Principal</div>
                     <div class="round-timer-container size-main-ctrl">
                         <svg viewBox="0 0 36 36" width="100%"><path class="progress-ring-bg" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="2"/><path id="ring-main-ctrl" class="progress-ring-bar" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="2"/></svg>
                         <div id="txt-main-ctrl" class="digital-ctrl">10:00</div>
                     </div>
                 </div>
                 <div class="preview-clock-box">
-                    <div class="preview-clock-label">Aparte</div>
+                    <div class="preview-clock-label">Tempo de Aparte</div>
                     <div class="round-timer-container size-main-ctrl">
                         <svg viewBox="0 0 36 36" width="100%"><path class="progress-ring-bg" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="2"/><path id="ring-aparte-ctrl" class="progress-ring-bar" style="stroke:var(--warning)" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="2"/></svg>
                         <div id="txt-aparte-ctrl" class="digital-ctrl" style="color:var(--warning)">03:00</div>
@@ -131,7 +139,7 @@
                     <div class="btn-grid">
                         <button class="btn-primary" onclick="addTime(60)">+1 Min</button>
                         <button class="btn-primary" onclick="addTime(180)">+3 Min</button>
-                        <button class="btn-dark" onclick="tocarCampainha()">🔔 Campainha</button>
+                        <button type="button" class="btn-success" style="background-color: var(--success)" onclick="tocarSinal()">🔔 Sinal</button>
                     </div>
                 </div>
 
@@ -154,6 +162,8 @@
     </div>
 
     <div id="view-display">
+        <img src="logo.png" alt="Brasão Câmara" class="logo-cmi-display" onerror="this.style.display='none'">
+        
         <div class="display-header">
             <h1>Câmara Municipal de Igarassu</h1>
             <h2 id="display-subtitle">Sessão Legislativa</h2>
@@ -176,11 +186,10 @@
     </div>
 
     <script>
-        const canal = new BroadcastChannel('igarassu_v4');
+        const canal = new BroadcastChannel('igarassu_v8');
         const params = new URLSearchParams(window.location.search);
         const isDisplay = params.get('mode') === 'display';
 
-        // Tempos Padrão (Segundos)
         const PADRAO_MAIN = 600; 
         const PADRAO_APARTE = 180;
 
@@ -188,32 +197,18 @@
         let tAparte = PADRAO_APARTE, tAparteInit = PADRAO_APARTE, intAparte = null;
         let modoAtivo = 'main';
 
-        // AUDIO - CAMPAINHA ALTA
-        let audioCtx = null;
-        function tocarCampainha() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            
-            function ding(freq, start, duration) {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(freq, start);
-                gain.gain.setValueAtTime(0.5, start);
-                gain.gain.exponentialRampToValueAtTime(0.01, start + duration);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(start); osc.stop(start + duration);
-            }
-            // Som duplo "Deng-Dong"
-            const agora = audioCtx.currentTime;
-            ding(660, agora, 1.5);      // Nota Mi
-            ding(440, agora + 0.4, 1.5); // Nota Lá (mais grave)
+        const audioEl = document.getElementById('audio');
+
+        function tocarSinal() {
+            audioEl.currentTime = 0;
+            audioEl.play().catch(e => console.log("Áudio bloqueado. Clique na página para liberar."));
         }
 
         if (isDisplay) {
             document.getElementById('view-display').style.display = 'flex';
             canal.onmessage = e => {
                 syncData(e.data);
-                if (e.data.alerta) tocarCampainha();
+                if (e.data.alerta) tocarSinal();
             };
         } else {
             document.getElementById('view-controller').style.display = 'block';
@@ -267,13 +262,12 @@
             });
         }
 
-        // FUNÇÕES PRINCIPAIS
         function iniciar() {
             modoAtivo = 'main'; pausarA();
             if(!intMain && tMain > 0) {
                 intMain = setInterval(() => {
                     tMain--;
-                    if(tMain <= 0) { pausar(); syncData({alerta: true}); tocarCampainha(); }
+                    if(tMain <= 0) { pausar(); syncData({alerta: true}); tocarSinal(); }
                     else syncData();
                 }, 1000);
             }
@@ -290,17 +284,16 @@
         
         function addTime(s) { 
             tMain += s; 
-            tMainInit = Math.max(tMainInit, tMain); // Ajusta o círculo para o novo tempo total
+            tMainInit = Math.max(tMainInit, tMain);
             syncData(); 
         }
 
-        // FUNÇÕES APARTE
         function iniciarA() {
             modoAtivo = 'aparte'; pausar();
             if(!intAparte && tAparte > 0) {
                 intAparte = setInterval(() => {
                     tAparte--;
-                    if(tAparte <= 0) { pausarA(); syncData({alerta: true}); tocarCampainha(); }
+                    if(tAparte <= 0) { pausarA(); syncData({alerta: true}); tocarSinal(); }
                     else syncData();
                 }, 1000);
             }
