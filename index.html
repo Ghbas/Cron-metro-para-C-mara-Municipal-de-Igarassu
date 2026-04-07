@@ -1,7 +1,7 @@
  <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8"> 
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cronômetro Oficial - Câmara de Igarassu</title>
     <style>
@@ -10,6 +10,8 @@
             --warning: #ffc107;
             --danger: #f84545;
             --success: #28a745;
+            --purple: #8b5cf6;
+            --extra: #06b6d4;
             --white: #fff;
             --light: #f1f5f9;
             --dark: #0f172a;
@@ -54,56 +56,49 @@
 
         @keyframes pulse { from { opacity: 1; } to { opacity: 0.4; } }
 
-        /* PAINEL DE CONTROLE (OPERADOR) */
-        #view-controller { padding: 20px; display: none; }
-        .ctrl-card { max-width: 1100px; margin: 0 auto; background: var(--white); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        /* PAINEL DE CONTROLE */
+        #view-controller { padding: 20px; display: none; overflow-y: auto; height: 100vh; }
+        .ctrl-card { max-width: 1200px; margin: 0 auto; background: var(--white); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .ctrl-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid var(--light); padding-bottom: 15px; }
         
         .logo-cmi-ctrl { max-height: 60px; width: auto; object-fit: contain; }
 
-        .preview-section { background: var(--dark); border-radius: 15px; padding: 25px; display: flex; justify-content: space-around; margin-bottom: 25px; }
+        .preview-section { background: var(--dark); border-radius: 15px; padding: 25px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 25px; }
         .preview-clock-box { text-align: center; }
-        .preview-clock-label { font-size: 11px; text-transform: uppercase; color: var(--gray); margin-bottom: 15px; letter-spacing: 1px;}
+        .preview-clock-label { font-size: 9px; text-transform: uppercase; color: var(--gray); margin-bottom: 10px; letter-spacing: 1px;}
         
-        .size-main-ctrl { width: 150px; height: 150px; }
-        .digital-ctrl { font-family: var(--font-mono); font-size: 2.5rem; font-weight: bold; position: absolute; color: white; }
+        .size-ctrl-preview { width: 100px; height: 100px; }
+        .digital-ctrl { font-family: var(--font-mono); font-size: 1.5rem; font-weight: bold; position: absolute; color: white; }
         
         .controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .btn-group-box { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; }
-        .btn-group-box h3 { font-size: 13px; margin-bottom: 15px; text-transform: uppercase; color: var(--gray); text-align: center; }
-        .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .btn-group-box { background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; }
+        .btn-group-box h3 { font-size: 11px; margin-bottom: 10px; text-transform: uppercase; color: var(--gray); text-align: center; }
+        .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         
-        button { padding: 12px 5px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; color: white; font-size: 13px; }
+        button { padding: 10px 2px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; color: white; font-size: 11px; }
         button:hover { filter: brightness(85%); transform: translateY(-1px); }
         .btn-success { background: var(--success); }
         .btn-warning { background: var(--warning); color: #000; }
         .btn-danger { background: var(--danger); }
         .btn-primary { background: var(--primary); }
+        .btn-purple { background: var(--purple); }
+        .btn-extra { background: var(--extra); }
 
-        /* TELÃO (PROJETOR) */
+        /* TELÃO */
         #view-display { background: #020617; color: white; height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         
-        .display-header-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 40px;
-            width: 100%;
-        }
-
+        .display-header-container { display: flex; align-items: center; justify-content: center; gap: 30px; margin-bottom: 40px; width: 100%; }
         .logo-cmi-display { max-height: 18vh; width: auto; object-fit: contain; }
-
         .display-text-group { text-align: left; }
         .display-text-group h1 { font-size: 3.5vw; color: var(--primary); text-transform: uppercase; line-height: 1.1; }
         .display-text-group h2 { font-size: 1.8vw; color: var(--gray); font-weight: 400; letter-spacing: 2px; margin-top: 5px; }
         
-        .clock-wrapper { transition: opacity 0.4s ease; }
+        .clock-wrapper { transition: opacity 0.4s ease; text-align: center; }
         .hidden { display: none !important; }
         
         .size-main-display { width: 65vh; height: 65vh; }
-        .digital-display { font-family: var(--font-mono); font-size: 13vh; font-weight: bold; position: absolute; }
-        .label-mode { font-size: 4vh; color: var(--warning); font-weight: bold; margin-bottom: 15px; letter-spacing: 8px; text-align: center; }
+        .digital-display { font-family: var(--font-mono); font-size: 12vh; font-weight: bold; position: absolute; }
+        .label-mode { font-size: 4vh; font-weight: bold; margin-bottom: 15px; letter-spacing: 5px; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -114,25 +109,39 @@
         <div class="ctrl-card">
             <div class="ctrl-header">
                 <div style="display: flex; align-items: center; gap: 15px;">
-                    <img src="logo.png" alt="Brasão Câmara" class="logo-cmi-ctrl" onerror="this.style.display='none'">
-                    <h1 style="font-size: 20px; color: var(--primary)">Igarassu - Controle Legislativo</h1>
+                    <img src="logo.png" alt="" class="logo-cmi-ctrl" onerror="this.style.display='none'">
+                    <h1 style="font-size: 18px; color: var(--primary)">Painel Multicontrolador Legislativo</h1>
                 </div>
-                <button class="btn-primary" onclick="abrirTelao()">🖥️ Abrir Aba do Telão</button>
+                <button class="btn-primary" onclick="abrirTelao()" style="padding: 10px 20px; font-size: 14px;">🖥️ Abrir Telão</button>
             </div>
 
             <div class="preview-section">
                 <div class="preview-clock-box">
-                    <div class="preview-clock-label">Tribuna Principal</div>
-                    <div class="round-timer-container size-main-ctrl">
+                    <div class="preview-clock-label">TRIBUNA</div>
+                    <div class="round-timer-container size-ctrl-preview">
                         <svg viewBox="0 0 36 36" width="100%"><path class="progress-ring-bg" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="2"/><path id="ring-main-ctrl" class="progress-ring-bar" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="2"/></svg>
                         <div id="txt-main-ctrl" class="digital-ctrl">10:00</div>
                     </div>
                 </div>
                 <div class="preview-clock-box">
-                    <div class="preview-clock-label">Tempo de Aparte</div>
-                    <div class="round-timer-container size-main-ctrl">
+                    <div class="preview-clock-label">APARTE</div>
+                    <div class="round-timer-container size-ctrl-preview">
                         <svg viewBox="0 0 36 36" width="100%"><path class="progress-ring-bg" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="2"/><path id="ring-aparte-ctrl" class="progress-ring-bar" style="stroke:var(--warning)" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="2"/></svg>
                         <div id="txt-aparte-ctrl" class="digital-ctrl" style="color:var(--warning)">03:00</div>
+                    </div>
+                </div>
+                <div class="preview-clock-box">
+                    <div class="preview-clock-label">CONSIDERAÇÕES</div>
+                    <div class="round-timer-container size-ctrl-preview">
+                        <svg viewBox="0 0 36 36" width="100%"><path class="progress-ring-bg" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="2"/><path id="ring-consid-ctrl" class="progress-ring-bar" style="stroke:var(--purple)" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="2"/></svg>
+                        <div id="txt-consid-ctrl" class="digital-ctrl" style="color:var(--purple)">02:00</div>
+                    </div>
+                </div>
+                <div class="preview-clock-box">
+                    <div class="preview-clock-label">TEMPO EXTRA</div>
+                    <div class="round-timer-container size-ctrl-preview">
+                        <svg viewBox="0 0 36 36" width="100%"><path class="progress-ring-bg" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="2"/><path id="ring-extra-ctrl" class="progress-ring-bar" style="stroke:var(--extra)" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="2"/></svg>
+                        <div id="txt-extra-ctrl" class="digital-ctrl" style="color:var(--extra)">00:00</div>
                     </div>
                 </div>
             </div>
@@ -141,30 +150,43 @@
                 <div class="btn-group-box">
                     <h3>Tribuna Principal</h3>
                     <div class="btn-grid">
-                        <button class="btn-success" onclick="iniciar()">Iniciar</button>
-                        <button class="btn-warning" onclick="pausar()">Pausar</button>
-                        <button class="btn-danger" onclick="zerar()">Zerar</button>
-                    </div>
-                    <h3 style="margin-top:15px">Acréscimos</h3>
-                    <div class="btn-grid">
-                        <button class="btn-primary" onclick="addTime(60)">+1 Min</button>
-                        <button class="btn-primary" onclick="addTime(180)">+3 Min</button>
-                        <button type="button" class="btn-success" style="background-color: var(--success)" onclick="tocarSinal()">🔔 Sinal</button>
+                        <button class="btn-success" onclick="controlTimer('main', 'start')">Iniciar</button>
+                        <button class="btn-warning" onclick="controlTimer('main', 'pause')">Pausar</button>
+                        <button class="btn-danger" onclick="controlTimer('main', 'reset')">Zerar</button>
+                        <button class="btn-primary" onclick="addTime('main', 60)">+1m</button>
+                        <button class="btn-primary" onclick="addTime('main', 180)">+3m</button>
+                        <button class="btn-dark" onclick="tocarSinal()">🔔 Som</button>
                     </div>
                 </div>
-
-                <div class="btn-group-box" style="border: 2px solid var(--warning)">
-                    <h3 style="color:#b45309">Controle de Aparte</h3>
+                <div class="btn-group-box" style="border-color: var(--warning)">
+                    <h3 style="color:#b45309">Aparte</h3>
                     <div class="btn-grid">
-                        <button class="btn-success" onclick="iniciarA()">▶ Ativar</button>
-                        <button class="btn-warning" onclick="pausarA()">Pausar</button>
-                        <button class="btn-danger" onclick="zerarA()">Zerar</button>
+                        <button class="btn-success" onclick="controlTimer('aparte', 'start')">Iniciar</button>
+                        <button class="btn-warning" onclick="controlTimer('aparte', 'pause')">Pausar</button>
+                        <button class="btn-danger" onclick="controlTimer('aparte', 'reset')">Zerar</button>
+                        <button class="btn-primary" onclick="addTime('aparte', 60)">+1m</button>
+                        <button class="btn-primary" onclick="addTime('aparte', 180)">+3m</button>
                     </div>
-                    <h3 style="margin-top:15px">Acréscimos Aparte</h3>
+                </div>
+                <div class="btn-group-box" style="border-color: var(--purple)">
+                    <h3 style="color:var(--purple)">Considerações Finais</h3>
                     <div class="btn-grid">
-                        <button class="btn-primary" style="background:#475569" onclick="addTimeA(60)">+1 Min</button>
-                        <button class="btn-primary" style="background:#475569" onclick="addTimeA(180)">+3 Min</button>
-                        <button class="btn-primary" style="background:#475569" onclick="addTimeA(300)">+5 Min</button>
+                        <button class="btn-purple" onclick="controlTimer('consid', 'start')">Iniciar</button>
+                        <button class="btn-warning" onclick="controlTimer('consid', 'pause')">Pausar</button>
+                        <button class="btn-danger" onclick="controlTimer('consid', 'reset')">Zerar</button>
+                        <button class="btn-primary" onclick="addTime('consid', 60)">+1m</button>
+                        <button class="btn-primary" onclick="addTime('consid', 180)">+3m</button>
+                    </div>
+                </div>
+                <div class="btn-group-box" style="border-color: var(--extra)">
+                    <h3 style="color:var(--extra)">Tempo Extra</h3>
+                    <div class="btn-grid">
+                        <button class="btn-extra" onclick="controlTimer('extra', 'start')">Iniciar</button>
+                        <button class="btn-warning" onclick="controlTimer('extra', 'pause')">Pausar</button>
+                        <button class="btn-danger" onclick="controlTimer('extra', 'reset')">Zerar</button>
+                        <button class="btn-primary" onclick="addTime('extra', 60)">+1m</button>
+                        <button class="btn-primary" onclick="addTime('extra', 120)">+2m</button>
+                        <button class="btn-primary" onclick="addTime('extra', 180)">+3m</button>
                     </div>
                 </div>
             </div>
@@ -173,56 +195,69 @@
 
     <div id="view-display">
         <div class="display-header-container">
-            <img src="logo.png" alt="Brasão Câmara" class="logo-cmi-display" onerror="this.style.display='none'">
+            <img src="logo.png" alt="" class="logo-cmi-display" onerror="this.style.display='none'">
             <div class="display-text-group">
                 <h1>Câmara Municipal de Igarassu</h1>
                 <h2 id="display-subtitle">Sessão Legislativa</h2>
             </div>
         </div>
 
-        <div id="wrapper-main" class="clock-wrapper">
+        <div id="disp-wrapper-main" class="clock-wrapper">
             <div class="round-timer-container size-main-display">
                 <svg viewBox="0 0 36 36" width="100%"><path class="progress-ring-bg" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="1.2"/><path id="ring-main-disp" class="progress-ring-bar" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="1.2"/></svg>
                 <div id="txt-main-disp" class="digital-display">10:00</div>
             </div>
         </div>
 
-        <div id="wrapper-aparte" class="clock-wrapper hidden">
-            <div class="label-mode">MODO APARTE</div>
+        <div id="disp-wrapper-aparte" class="clock-wrapper hidden">
+            <div class="label-mode" style="color:var(--warning)">MODO APARTE</div>
             <div class="round-timer-container size-main-display">
                 <svg viewBox="0 0 36 36" width="100%"><path class="progress-ring-bg" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="1.2"/><path id="ring-aparte-disp" class="progress-ring-bar" style="stroke:var(--warning)" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="1.2"/></svg>
                 <div id="txt-aparte-disp" class="digital-display" style="color:var(--warning)">03:00</div>
             </div>
         </div>
+
+        <div id="disp-wrapper-consid" class="clock-wrapper hidden">
+            <div class="label-mode" style="color:var(--purple)">CONSIDERAÇÕES FINAIS</div>
+            <div class="round-timer-container size-main-display">
+                <svg viewBox="0 0 36 36" width="100%"><path class="progress-ring-bg" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="1.2"/><path id="ring-consid-disp" class="progress-ring-bar" style="stroke:var(--purple)" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="1.2"/></svg>
+                <div id="txt-consid-disp" class="digital-display" style="color:var(--purple)">02:00</div>
+            </div>
+        </div>
+
+        <div id="disp-wrapper-extra" class="clock-wrapper hidden">
+            <div class="label-mode" style="color:var(--extra)">TEMPO EXTRA</div>
+            <div class="round-timer-container size-main-display">
+                <svg viewBox="0 0 36 36" width="100%"><path class="progress-ring-bg" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="1.2"/><path id="ring-extra-disp" class="progress-ring-bar" style="stroke:var(--extra)" d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" stroke-width="1.2"/></svg>
+                <div id="txt-extra-disp" class="digital-display" style="color:var(--extra)">00:00</div>
+            </div>
+        </div>
     </div>
 
     <script>
-        const canal = new BroadcastChannel('igarassu_v10');
+        const canal = new BroadcastChannel('igarassu_v12');
         const params = new URLSearchParams(window.location.search);
         const isDisplay = params.get('mode') === 'display';
 
-        const PADRAO_MAIN = 600; 
-        const PADRAO_APARTE = 180;
-
-        let tMain = PADRAO_MAIN, tMainInit = PADRAO_MAIN, intMain = null;
-        let tAparte = PADRAO_APARTE, tAparteInit = PADRAO_APARTE, intAparte = null;
-        let modoAtivo = 'main';
+        // O Extra agora começa com 0 segundos.
+        const DEFAULTS = { main: 600, aparte: 180, consid: 120, extra: 0 };
+        let timers = { 
+            main: { cur: DEFAULTS.main, init: DEFAULTS.main, int: null },
+            aparte: { cur: DEFAULTS.aparte, init: DEFAULTS.aparte, int: null },
+            consid: { cur: DEFAULTS.consid, init: DEFAULTS.consid, int: null },
+            extra: { cur: DEFAULTS.extra, init: DEFAULTS.extra, int: null }
+        };
+        let activeMode = 'main';
 
         const audioEl = document.getElementById('audio');
-
-        function tocarSinal() {
-            audioEl.currentTime = 0;
-            audioEl.play().catch(e => console.log("Áudio bloqueado. Clique na página para liberar."));
-        }
+        function tocarSinal() { audioEl.currentTime = 0; audioEl.play().catch(e => {}); }
 
         if (isDisplay) {
             document.getElementById('view-display').style.display = 'flex';
-            canal.onmessage = e => {
-                syncData(e.data);
-                if (e.data.alerta) tocarSinal();
-            };
+            canal.onmessage = e => syncUI(e.data);
         } else {
             document.getElementById('view-controller').style.display = 'block';
+            broadcast();
         }
 
         function format(s) {
@@ -231,104 +266,88 @@
             return `${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
         }
 
-        function syncData(data) {
-            if (data) {
-                tMain = data.tM; tMainInit = data.tMI;
-                tAparte = data.tA; tAparteInit = data.tAI;
-                modoAtivo = data.modo;
-            }
-
-            const mStr = format(tMain), aStr = format(tAparte);
-
-            if (isDisplay) {
-                document.getElementById('wrapper-main').classList.toggle('hidden', modoAtivo !== 'main');
-                document.getElementById('wrapper-aparte').classList.toggle('hidden', modoAtivo !== 'aparte');
-                document.getElementById('txt-main-disp').textContent = mStr;
-                document.getElementById('txt-aparte-disp').textContent = aStr;
-                updateRing('ring-main-disp', tMain, tMainInit, true);
-                updateRing('ring-aparte-disp', tAparte, tAparteInit, false);
-            } else {
-                document.getElementById('txt-main-ctrl').textContent = mStr;
-                document.getElementById('txt-aparte-ctrl').textContent = aStr;
-                updateRing('ring-main-ctrl', tMain, tMainInit, true);
-                updateRing('ring-aparte-ctrl', tAparte, tAparteInit, false);
-                canal.postMessage({ tM: tMain, tMI: tMainInit, tA: tAparte, tAI: tAparteInit, modo: modoAtivo, alerta: data?.alerta });
-            }
-        }
-
-        function updateRing(id, cur, tot, isMain) {
-            const el = document.getElementById(id);
-            if(!el) return;
-            const offset = 100 - (cur / tot * 100);
-            el.style.strokeDashoffset = offset;
+        function syncUI(data) {
+            if (data.playBeep) tocarSinal();
+            activeMode = data.activeMode;
             
-            const txtId = id.includes('main') ? (isDisplay ? 'txt-main-disp' : 'txt-main-ctrl') : (isDisplay ? 'txt-aparte-disp' : 'txt-aparte-ctrl');
-            const txtEl = document.getElementById(txtId);
+            Object.keys(timers).forEach(m => {
+                const info = data.timers[m];
+                const ringId = isDisplay ? `ring-${m}-disp` : `ring-${m}-ctrl`;
+                const txtId = isDisplay ? `txt-${m}-disp` : `txt-${m}-ctrl`;
+                
+                document.getElementById(txtId).textContent = format(info.cur);
+                
+                // Proteção matemática: Se o tempo inicial for 0 (como no Extra), o círculo fica vazio (100% offset)
+                const percent = info.init > 0 ? (info.cur / info.init * 100) : 0;
+                const offset = 100 - percent;
+                document.getElementById(ringId).style.strokeDashoffset = offset;
 
-            [el, txtEl].forEach(item => {
-                if(!item) return;
-                item.classList.remove('time-warning', 'time-danger');
-                if (cur <= 0) item.classList.add('time-danger');
-                else if (isMain && cur <= 60) item.classList.add('time-warning');
+                const txtEl = document.getElementById(txtId);
+                const ringEl = document.getElementById(ringId);
+                [txtEl, ringEl].forEach(el => {
+                    el.classList.remove('time-warning', 'time-danger');
+                    // Só fica vermelho se o relógio já teve tempo e chegou a 0, evitando que o Extra inicie vermelho
+                    if(info.cur <= 0 && info.init > 0) el.classList.add('time-danger');
+                    else if(m === 'main' && info.cur <= 60 && info.cur > 0) el.classList.add('time-warning');
+                });
+
+                if(isDisplay) {
+                    document.getElementById(`disp-wrapper-${m}`).classList.toggle('hidden', activeMode !== m);
+                }
             });
         }
 
-        function iniciar() {
-            modoAtivo = 'main'; pausarA();
-            if(!intMain && tMain > 0) {
-                intMain = setInterval(() => {
-                    tMain--;
-                    if(tMain <= 0) { pausar(); syncData({alerta: true}); tocarSinal(); }
-                    else syncData();
-                }, 1000);
-            }
-            syncData();
-        }
-        function pausar() { clearInterval(intMain); intMain = null; syncData(); }
-        
-        function zerar() { 
-            pausar(); 
-            tMain = PADRAO_MAIN; 
-            tMainInit = PADRAO_MAIN; 
-            syncData(); 
-        }
-        
-        function addTime(s) { 
-            tMain += s; 
-            tMainInit = Math.max(tMainInit, tMain);
-            syncData(); 
+        function broadcast(playBeep = false) {
+            const data = { timers: {}, activeMode, playBeep };
+            Object.keys(timers).forEach(m => {
+                data.timers[m] = { cur: timers[m].cur, init: timers[m].init };
+            });
+            syncUI(data);
+            if(!isDisplay) canal.postMessage(data);
         }
 
-        function iniciarA() {
-            modoAtivo = 'aparte'; pausar();
-            if(!intAparte && tAparte > 0) {
-                intAparte = setInterval(() => {
-                    tAparte--;
-                    if(tAparte <= 0) { pausarA(); syncData({alerta: true}); tocarSinal(); }
-                    else syncData();
-                }, 1000);
+        function controlTimer(mode, action) {
+            if(action === 'start') {
+                Object.keys(timers).forEach(m => { clearInterval(timers[m].int); timers[m].int = null; });
+                activeMode = mode;
+                
+                if(timers[mode].cur > 0) {
+                    timers[mode].int = setInterval(() => {
+                        timers[mode].cur--;
+                        if(timers[mode].cur <= 0) {
+                            clearInterval(timers[mode].int); 
+                            timers[mode].int = null;
+                            timers[mode].cur = 0; // Trava no zero exato
+                            broadcast(true); // O 'true' garante que a campainha vai tocar
+                        } else { 
+                            broadcast(); 
+                        }
+                    }, 1000);
+                }
+            } else if(action === 'pause') {
+                clearInterval(timers[mode].int); timers[mode].int = null;
+            } else if(action === 'reset') {
+                clearInterval(timers[mode].int); timers[mode].int = null;
+                timers[mode].cur = DEFAULTS[mode];
+                timers[mode].init = DEFAULTS[mode];
+                activeMode = 'main';
             }
-            syncData();
+            broadcast();
         }
-        function pausarA() { clearInterval(intAparte); intAparte = null; syncData(); }
-        
-        function zerarA() { 
-            pausarA(); 
-            tAparte = PADRAO_APARTE; 
-            tAparteInit = PADRAO_APARTE; 
-            modoAtivo = 'main'; 
-            syncData(); 
-        }
-        
-        function addTimeA(s) { 
-            tAparte += s; 
-            tAparteInit = Math.max(tAparteInit, tAparte);
-            syncData(); 
+
+        function addTime(mode, s) {
+            // Se o relógio estava zerado, o tempo que adicionamos se torna a nova base de 100% do círculo
+            if (timers[mode].cur <= 0) {
+                timers[mode].init = s;
+                timers[mode].cur = s;
+            } else {
+                timers[mode].cur += s;
+                timers[mode].init = Math.max(timers[mode].init, timers[mode].cur);
+            }
+            broadcast();
         }
 
         function abrirTelao() { window.open(window.location.href + '?mode=display', '_blank'); }
-
-        if (!isDisplay) syncData();
     </script>
 </body>
 </html>
