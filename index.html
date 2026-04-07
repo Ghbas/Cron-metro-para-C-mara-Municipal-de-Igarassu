@@ -81,19 +81,29 @@
         .btn-primary { background: var(--primary); }
 
         /* TELÃO (PROJETOR) */
-        #view-display { background: #020617; color: white; height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        .logo-cmi-display { max-height: 15vh; width: auto; margin-bottom: 20px; object-fit: contain; }
+        #view-display { background: #020617; color: white; height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        
+        .display-header-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            width: 100%;
+        }
 
-        .display-header { margin-bottom: 30px; text-align: center; }
-        .display-header h1 { font-size: 3.5vw; color: var(--primary); text-transform: uppercase; margin-bottom: 5px;}
-        .display-header h2 { font-size: 1.8vw; color: var(--gray); font-weight: 400; letter-spacing: 2px; }
+        .logo-cmi-display { max-height: 18vh; width: auto; object-fit: contain; }
+
+        .display-text-group { text-align: left; }
+        .display-text-group h1 { font-size: 3.5vw; color: var(--primary); text-transform: uppercase; line-height: 1.1; }
+        .display-text-group h2 { font-size: 1.8vw; color: var(--gray); font-weight: 400; letter-spacing: 2px; margin-top: 5px; }
         
         .clock-wrapper { transition: opacity 0.4s ease; }
         .hidden { display: none !important; }
         
-        .size-main-display { width: 60vh; height: 60vh; }
-        .digital-display { font-family: var(--font-mono); font-size: 14vh; font-weight: bold; position: absolute; }
-        .label-mode { font-size: 4vh; color: var(--warning); font-weight: bold; margin-bottom: 20px; letter-spacing: 8px; }
+        .size-main-display { width: 65vh; height: 65vh; }
+        .digital-display { font-family: var(--font-mono); font-size: 13vh; font-weight: bold; position: absolute; }
+        .label-mode { font-size: 4vh; color: var(--warning); font-weight: bold; margin-bottom: 15px; letter-spacing: 8px; text-align: center; }
     </style>
 </head>
 <body>
@@ -162,11 +172,12 @@
     </div>
 
     <div id="view-display">
-        <img src="logo.png" alt="Brasão Câmara" class="logo-cmi-display" onerror="this.style.display='none'">
-        
-        <div class="display-header">
-            <h1>Câmara Municipal de Igarassu</h1>
-            <h2 id="display-subtitle">Sessão Legislativa</h2>
+        <div class="display-header-container">
+            <img src="logo.png" alt="Brasão Câmara" class="logo-cmi-display" onerror="this.style.display='none'">
+            <div class="display-text-group">
+                <h1>Câmara Municipal de Igarassu</h1>
+                <h2 id="display-subtitle">Sessão Legislativa</h2>
+            </div>
         </div>
 
         <div id="wrapper-main" class="clock-wrapper">
@@ -186,7 +197,7 @@
     </div>
 
     <script>
-        const canal = new BroadcastChannel('igarassu_v8');
+        const canal = new BroadcastChannel('igarassu_v10');
         const params = new URLSearchParams(window.location.search);
         const isDisplay = params.get('mode') === 'display';
 
